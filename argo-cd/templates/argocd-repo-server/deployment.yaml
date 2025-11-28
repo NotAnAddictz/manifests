@@ -372,6 +372,7 @@ spec:
           containerPort: {{ .Values.repoServer.containerPorts.metrics }}
           protocol: TCP
         livenessProbe:
+          enabled: false
           httpGet:
             path: /healthz?full=true
             port: metrics
@@ -381,6 +382,7 @@ spec:
           successThreshold: {{ .Values.repoServer.livenessProbe.successThreshold }}
           failureThreshold: {{ .Values.repoServer.livenessProbe.failureThreshold }}
         readinessProbe:
+          enabled: false
           httpGet:
             path: /healthz
             port: metrics
