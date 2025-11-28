@@ -1,20 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: argocd
-  namespace: argocd
+  name: dify
+  namespace: dify
 spec:
   project: default
   source:
     repoURL: https://github.com/NotAnAddictz/manifests
     targetRevision: HEAD
-    path: argocd
+    path: dify
     helm:
       valueFiles:
         - values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: dify
   syncPolicy:
     automated:
       prune: true
