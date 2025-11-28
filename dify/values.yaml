@@ -256,7 +256,7 @@ api:
       ##   set, choosing the default provisioner.
       ## ReadWriteMany access mode required for `api` and `worker`
       ##
-      storageClass:
+      storageClass: nfs-client
       accessModes: ReadWriteMany
       size: 5Gi
       subPath: ""

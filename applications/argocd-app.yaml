@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/NotAnAddictz/manifests
-    targetRevision: HEAD
+    targetRevision: master
     path: argo-cd
     helm:
       valueFiles:
