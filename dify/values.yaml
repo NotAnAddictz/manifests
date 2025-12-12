@@ -8,7 +8,7 @@
 image:
   api:
     repository: langgenius/dify-api
-    tag: "1.10.1"
+    tag: "1.10.1-fix.1"
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
@@ -19,7 +19,7 @@ image:
 
   web:
     repository: langgenius/dify-web
-    tag: "1.10.1"
+    tag: "1.10.1-fix.1"
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
@@ -124,41 +124,53 @@ api:
   customReadinessProbe: {}
   ## @param api.customStartupProbe Custom startupProbe that overrides the default one
   customStartupProbe: {}
-  # Configure Pods Security Context
-  podSecurityContext: {}
-  # Configure Container Security Context
-  containerSecurityContext: {}
+  ## Configure Pods Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+  ## @param api.podSecurityContext.enabled Enabled Dify api pod's Security Context
+  ## @param api.podSecurityContext.fsGroup Set Dify api pod's Security Context fsGroup
+  ##
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  ## Configure Container Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+  ## @param api.containerSecurityContext.enabled Dify api containers' Security Context
+  ## @param api.containerSecurityContext.runAsUser Set Dify api containers' Security Context runAsUser
+  ##
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
   extraEnv:
-    # Apply your own Environment Variables if necessary.
-    # Variables defined here take higher priority than those from `ConfigMap` generated given `.Values`
-    # Direct value assignment
-    # - name: LANG
-    #   value: "C.UTF-8"
-    #   - name: SECRET_KEY
-    # Use existing k8s secrets
-    #  - name: DB_PASSWORD
-    #    valueFrom:
-    #      secretKeyRef:
-    #        name: my-secret
-    #        key: DB_PASSWORD
-    - name: CHECK_UPDATE_URL
-      # Won't check for updates if left empty
-      #   value: https://updates.dify.ai
-      value: ""
-    - name: CODE_MAX_NUMBER
-      value: "9223372036854775807"
-    - name: CODE_MIN_NUMBER
-      value: "-9223372036854775808"
-    - name: CODE_MAX_STRING_LENGTH
-      value: "80000"
-    - name: TEMPLATE_TRANSFORM_MAX_LENGTH
-      value: "80000"
-    - name: CODE_MAX_STRING_ARRAY_LENGTH
-      value: "30"
-    - name: CODE_MAX_OBJECT_ARRAY_LENGTH
-      value: "30"
-    - name: CODE_MAX_NUMBER_ARRAY_LENGTH
-      value: "1000"
+  # Apply your own Environment Variables if necessary.
+  # Variables defined here take higher priority than those from `ConfigMap` generated given `.Values`
+  # Direct value assignment
+  # - name: LANG
+  #   value: "C.UTF-8"
+  #   - name: SECRET_KEY
+  # Use existing k8s secrets
+  #  - name: DB_PASSWORD
+  #    valueFrom:
+  #      secretKeyRef:
+  #        name: my-secret
+  #        key: DB_PASSWORD
+  - name: CHECK_UPDATE_URL
+    # Won't check for updates if left empty
+    #   value: https://updates.dify.ai
+    value: ""
+  - name: CODE_MAX_NUMBER
+    value: "9223372036854775807"
+  - name: CODE_MIN_NUMBER
+    value: "-9223372036854775808"
+  - name: CODE_MAX_STRING_LENGTH
+    value: "80000"
+  - name: TEMPLATE_TRANSFORM_MAX_LENGTH
+    value: "80000"
+  - name: CODE_MAX_STRING_ARRAY_LENGTH
+    value: "30"
+  - name: CODE_MAX_OBJECT_ARRAY_LENGTH
+    value: "30"
+  - name: CODE_MAX_NUMBER_ARRAY_LENGTH
+    value: "1000"
   ## OpenTelemetry (OTEL) configuration
   otel:
     enabled: false
@@ -256,7 +268,7 @@ api:
       ##   set, choosing the default provisioner.
       ## ReadWriteMany access mode required for `api` and `worker`
       ##
-      storageClass: "nfs-client"
+      storageClass:
       accessModes: ReadWriteMany
       size: 5Gi
       subPath: ""
@@ -302,10 +314,22 @@ worker:
   ## @param worker.updateStrategy Update strategy type and configuration parameters
   ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
   updateStrategy: {}
-  # Configure Pods Security Context
-  podSecurityContext: {}
-  # Configure Container Security Context
-  containerSecurityContext: {}
+  ## Configure Pods Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+  ## @param worker.podSecurityContext.enabled Enabled Dify worker pod's Security Context
+  ## @param worker.podSecurityContext.fsGroup Set Dify worker pod's Security Context fsGroup
+  ##
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  ## Configure Container Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+  ## @param worker.containerSecurityContext.enabled Dify worker containers' Security Context
+  ## @param worker.containerSecurityContext.runAsUser Set Dify worker containers' Security Context runAsUser
+  ##
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
   extraEnv:
   # Apply your own Environment Variables if necessary.
   # Variables defined here take higher priority than those from `ConfigMap` generated given `.Values`
@@ -357,10 +381,22 @@ beat:
   ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
   updateStrategy:
     type: Recreate
-  # Configure Pods Security Context
-  podSecurityContext: {}
-  # Configure Container Security Context
-  containerSecurityContext: {}
+  ## Configure Pods Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+  ## @param beat.podSecurityContext.enabled Enabled Dify Celery Beat pod's Security Context
+  ## @param beat.podSecurityContext.fsGroup Set Celery Beat pod's Security Context fsGroup
+  ##
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  ## Configure Container Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+  ## @param beat.containerSecurityContext.enabled Celery Beat containers' Security Context
+  ## @param beat.containerSecurityContext.runAsUser Set Celery Beat containers' Security Context runAsUser
+  ##
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
   extraEnv:
   # Apply your own Environment Variables if necessary.
   # Variables defined here take higher priority than those from `ConfigMap` generated given `.Values`
@@ -431,7 +467,7 @@ proxy:
         ##   set, choosing the default provisioner.
         ## ReadWriteMany access mode required for nginx
         ##
-        storageClass: "nfs-client"
+        storageClass:
         accessModes: ReadWriteMany
         size: 1Gi
         subPath: ""
@@ -506,9 +542,9 @@ web:
   # Configure Container Security Context
   containerSecurityContext: {}
   extraEnv:
-    # Apply your own Environment Variables if necessary
-    - name: EDITION
-      value: "SELF_HOSTED"
+  # Apply your own Environment Variables if necessary
+  - name: EDITION
+    value: "SELF_HOSTED"
   service:
     port: 3000
     annotations: {}
@@ -588,11 +624,11 @@ sandbox:
   # Configure Container Security Context
   containerSecurityContext: {}
   extraEnv:
-    # Apply your own Environment Variables if necessary
-    # - name: LANG
-    #   value: "C.UTF-8"
-    - name: WORKER_TIMEOUT
-      value: "15"
+  # Apply your own Environment Variables if necessary
+  # - name: LANG
+  #   value: "C.UTF-8"
+  - name: WORKER_TIMEOUT
+    value: "15"
   ## @param sandbox.persistence.enabled Use volumes to persist data
   ##
   persistence:
@@ -755,7 +791,7 @@ pluginDaemon:
       ##   set, choosing the default provisioner.
       ## ReadWriteMany access mode required for `pluginDaemon`
       ##
-      storageClass: "nfs-client"
+      storageClass:
       accessModes: ReadWriteMany
       size: 5Gi
       subPath: ""
@@ -880,14 +916,14 @@ weaviate:
   # example setting the nofile limit
   command: ["/bin/weaviate"]
   args:
-    - "--host"
-    - "0.0.0.0"
-    - "--port"
-    - "8080"
-    - "--scheme"
-    - "http"
-    - "--config-file"
-    - "/weaviate-config/conf.yaml"
+    - '--host'
+    - '0.0.0.0'
+    - '--port'
+    - '8080'
+    - '--scheme'
+    - 'http'
+    - '--config-file'
+    - '/weaviate-config/conf.yaml'
     - --read-timeout=60s
     - --write-timeout=60s
 
@@ -1063,6 +1099,7 @@ weaviate:
     successThreshold: 1
     timeoutSeconds: 3
 
+
   terminationGracePeriodSeconds: 600
 
   # Weaviate Config
@@ -1102,11 +1139,11 @@ weaviate:
     admin_list:
       enabled: true
       users:
-        # Examples
-        # - admin_user1
-        # - admin_user2
-        # - api-key-user-admin
-        - hello@dify.ai
+      # Examples
+      # - admin_user1
+      # - admin_user2
+      # - api-key-user-admin
+      - hello@dify.ai
       read_only_users:
       # Examples
       # - readonly_user1
@@ -1116,6 +1153,7 @@ weaviate:
   query_defaults:
     limit: 100
   debug: false
+
 
   # Insert any custom environment variables or envSecrets by putting the exact name
   # and desired value into the settings below. Any env name passed will be automatically
@@ -1218,6 +1256,7 @@ weaviate:
     AUTHENTICATION_APIKEY_USERS: "hello@dify.ai"
     AUTHORIZATION_ADMINLIST_ENABLED: "true"
     AUTHORIZATION_ADMINLIST_USERS: "hello@dify.ai"
+
 
   envSecrets:
     # create a Kubernetes secret with AUTHENTICATION_APIKEY_ALLOWED_KEYS key and its respective value
@@ -1397,6 +1436,7 @@ weaviate:
       #   AZURE_STORAGE_KEY: name-of-the-k8s-secret-containing-account-key
       #   AZURE_STORAGE_CONNECTION_STRING: name-of-the-k8s-secret-containing-connection-string
 
+
   # modules are extensions to Weaviate, they can be used to support various
   # ML-models, but also other features unrelated to model inference.
   # An inference/vectorizer module is not required, you can also run without any
@@ -1413,7 +1453,7 @@ weaviate:
   # values.yaml will be ignored when defining a custom config map.
   custom_config_map:
     enabled: false
-    name: "custom-config"
+    name: 'custom-config'
 
   # Pass any annotations to Weaviate pods
   annotations:
@@ -1448,13 +1488,14 @@ weaviate:
   globalPriorityClassName: ""
 
 service:
-  type: NodePort
-  port: 8080
+  type: ClusterIP
+  port: 80
 
 ingress:
   enabled: false
   className: ""
-  annotations: {}
+  annotations:
+    {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
     # nginx.ingress.kubernetes.io/backend-protocol: HTTP
@@ -2617,12 +2658,15 @@ redis:
 ## @Section External service
 ##
 
+## @Section External Database
+##
+
 ## @section External PostgreSQL configuration
 ##
 
 ###################################
 # External postgres
-# - these configs are only used when `externalPostgres.enabled` is true
+# - these configs applies only if `externalPostgres.enabled` is true
 ###################################
 externalPostgres:
   enabled: false
@@ -2634,12 +2678,29 @@ externalPostgres:
     api: "dify"
     pluginDaemon: "dify_plugin"
 
+## @section External MySQL configuration
+##
+
+###################################
+# External MySQL
+# - these configs applies only if `externalMysql.enabled` is true and `externalPostgres.enabled` is false
+###################################
+externalMysql:
+  enabled: false
+  username: "root"
+  password: "difyai123456"
+  address: localhost
+  port: 3306
+  database:
+    api: "dify"
+    pluginDaemon: "dify_plugin"
+
 ## @section External Redis
 ##
 
 ###################################
 # External Redis
-# - these configs are only used when `externalRedis.enabled` is true
+# - these configs applies only if `externalRedis.enabled` is true
 ###################################
 externalRedis:
   enabled: false
@@ -2660,12 +2721,13 @@ externalRedis:
       - "sentinel3.example:26379"
     password: ""
 
+
 ## @Section Extenral storage backend
 ##
 
 ###################################
 # External S3
-# - these configs are only used when `externalS3.enabled` is true
+# - these configs applies only if `externalS3.enabled` is true
 ###################################
 externalS3:
   enabled: false
@@ -2676,14 +2738,14 @@ externalS3:
   bucketName:
     # Shared storage for `api` and `worker`
     api: "difyai"
-    # If specifed, `pluginDaemon` will use this bucket instead of binding `PersistentVolume` for data persistence (only used when `externalS3.enabled` is set to `true`).
+    # If specifed, `pluginDaemon` will use this bucket instead of binding `PersistentVolume` for data persistence.
     pluginDaemon:
   useIAM: false
   region: "us-east-1"
 
 ###################################
 # External Azure Blob Storage
-# - these configs are only used when `externalS3.enabled` is false and `externalAzureBlobStorage.enabled` is true
+# - these configs applies only if all external storage backends above are disabled and `externalAzureBlobStorage.enabled` is true
 ###################################
 externalAzureBlobStorage:
   enabled: false
@@ -2694,7 +2756,7 @@ externalAzureBlobStorage:
 
 ###################################
 # External OSS
-# - these configs are only used when both `externalS3.enabled` and `externalAzureBlobStorage.enabled` are false and `externalOSS.enabled` is true
+# - these configs applies only if all external storage backends above are disabled and `externalOSS.enabled` is true
 ###################################
 externalOSS:
   enabled: false
@@ -2704,26 +2766,26 @@ externalOSS:
   region: "ap-southeast-1"
   bucketName:
     api: "difyai"
-    # If specifed, `pluginDaemon` will use this bucket instead of binding `PersistentVolume` for data persistence (only used when `externalOSS.enabled` is set to `true`).
+    # If specifed, `pluginDaemon` will use this bucket instead of binding `PersistentVolume` for data persistence.
     pluginDaemon:
   authVersion: v4
   path: "your-path"
 
 ###################################
 # External Google Cloud Storage
-# - these configs are only used when `externalS3.enabled` and `externalAzureBlobStorage.enabled` and `externalOSS.enabled` are false and `externalGCS.enabled` is true
+# - these configs applies only if all external storage backends above are disabled and `externalGCS.enabled` is true
 ###################################
 externalGCS:
   enabled: false
   bucketName:
     api: "difyai"
-    # If specifed, `pluginDaemon` will use this bucket instead of binding `PersistentVolume` for data persistence (only used when `externalGCS.enabled` is set to `true`).
+    # If specifed, `pluginDaemon` will use this bucket instead of binding `PersistentVolume` for data persistence.
     pluginDaemon:
   serviceAccountJsonBase64: ""
 
 ###################################
 # External TENCENT COS
-# - these configs are only used when `externalS3.enabled` and `externalAzureBlobStorage.enabled` and `externalOSS.enabled` and `externalGCS.enabled` are false and `externalCOS.enabled` is true
+# - these configs applies only if all external storage backends above are disabled and `externalCOS.enabled` is true
 ###################################
 externalCOS:
   enabled: false
@@ -2732,13 +2794,13 @@ externalCOS:
   region: "your-region"
   bucketName:
     api: "your-bucket-name"
-    # If specifed, `pluginDaemon` will use this bucket instead of binding `PersistentVolume` for data persistence (only used when `externalCOS.enabled` is set to `true`).
+    # If specifed, `pluginDaemon` will use this bucket instead of binding `PersistentVolume` for data persistence.
     pluginDaemon:
   scheme: "your-scheme"
 
 ###################################
 # External HUAWEI OBS
-# - these configs are only used when `externalS3.enabled` and `externalAzureBlobStorage.enabled` and `externalOSS.enabled` and `externalGCS.enabled` and `externalCOS.enabled` are false and `externalOBS.enabled` is true
+# - these configs applies only if all external storage backends above are disabled and `externalOBS.enabled` is true
 ###################################
 externalOBS:
   enabled: false
@@ -2747,12 +2809,12 @@ externalOBS:
   secretKey: "your-secret-key"
   bucketName:
     api: "your-bucket-name"
-    # If specifed, `pluginDaemon` will use this bucket instead of binding `PersistentVolume` for data persistence (only used when `externalOBS.enabled` is set to `true`).
+    # If specifed, `pluginDaemon` will use this bucket instead of binding `PersistentVolume` for data persistence.
     pluginDaemon:
 
 ###################################
 # External Tinder Object Storage (TOS) from volcengine
-# - these configs are only used when `externalS3.enabled` and `externalAzureBlobStorage.enabled` and `externalOSS.enabled` and `externalGCS.enabled` and `externalCOS.enabled` and `externalOBS.enabled` are false and `externalTOS.enabled` is true
+# - these configs applies only if all external storage backends above are disabled and `externalTOS.enabled` is true
 ###################################
 externalTOS:
   enabled: false
@@ -2762,7 +2824,7 @@ externalTOS:
   bucketName:
     # Shared storage for `api` and `worker`
     api: "your-bucket-name"
-    # If specified, `pluginDaemon` will use this bucket instead of binding `PersistentVolume` for data persistence (only used when `externalTOS.enabled` is set to `true`).
+    # If specified, `pluginDaemon` will use this bucket instead of binding `PersistentVolume` for data persistence.
     pluginDaemon:
   region: "cn-beijing"
 
@@ -2771,7 +2833,7 @@ externalTOS:
 
 ###################################
 # External Weaviate
-# - these configs take effect when `externalWeaviate.enabled` is true
+# - these configs applies only if `externalWeaviate.enabled` is true
 ###################################
 externalWeaviate:
   enabled: false
@@ -2782,7 +2844,7 @@ externalWeaviate:
 
 ###################################
 # External Qdrant
-# - these configs take effect only if `externalWeaviate.enabled` is `false` and `externalQdrant.enabled` is `true`
+# - these configs applies only if all vector databases above are disabled and `externalQdrant.enabled` is true
 ###################################
 externalQdrant:
   enabled: false
@@ -2795,7 +2857,7 @@ externalQdrant:
 
 ###################################
 # External Milvus
-# - these configs take effect only if both `externalWeaviate.enabled` and `externalQdrant.enabled` are set as `false` and `externalMilvus.enabled` is `true`
+# - these configs applies only if both `externalWeaviate.enabled` and `externalQdrant.enabled` are false and `externalMilvus.enabled` is true
 ###################################
 externalMilvus:
   enabled: false
@@ -2807,7 +2869,7 @@ externalMilvus:
 
 ###################################
 # External Pgvector
-# - these configs take effect only if both `externalWeaviate.enabled`, `externalQdrant.enabled` and `externalMilvus.enabled` are set as `false` and `externalPgvector.enabled` is `true`
+# - these configs applies only if all vector databases above are disabled and `externalPgvector.enabled` is true
 ###################################
 externalPgvector:
   enabled: false
@@ -2819,7 +2881,7 @@ externalPgvector:
 
 ###################################
 # External Tencent Vector DB
-# - these configs take effect only if both `externalWeaviate.enabled`, `externalQdrant.enabled` and `externalMilvus.enabled` and `externalPgvector.enabled` are set as `false` and `externalTencentVectorDB.enabled` is `true`
+# - these configs applies only if all vector databases above are disabled and `externalTencentVectorDB.enabled` is true
 ###################################
 externalTencentVectorDB:
   enabled: false
@@ -2833,7 +2895,7 @@ externalTencentVectorDB:
 
 ###################################
 # External MyScaleDB Vector DB
-# - these configs take effect only if both `externalWeaviate.enabled`, `externalQdrant.enabled` and `externalMilvus.enabled` and `externalPgvector.enabled` and `externalTencentVectorDB.enabled` are set as `false` and `externalMyScaleDB.enabled` is `true`
+# - these configs applies only if all vector databases above are disabled and `externalMyScaleDB.enabled` is true
 ###################################
 externalMyScaleDB:
   enabled: false
@@ -2846,7 +2908,7 @@ externalMyScaleDB:
 
 ###################################
 # External TableStore Vector DB
-# - these configs take effect only if both `externalWeaviate.enabled`, `externalQdrant.enabled` and `externalMilvus.enabled` and `externalPgvector.enabled` and `externalTencentVectorDB.enabled` and `externalMyScaleDB.enabled` are set as `false` and `externalTableStore.enabled` is `true`
+# - these configs applies only if all vector databases above are disabled and `externalTableStore.enabled` is true
 ###################################
 externalTableStore:
   enabled: false
@@ -2857,7 +2919,7 @@ externalTableStore:
 
 ###################################
 # External Elasticsearch
-# - these configs take effect only if all other vector databases are disabled and `externalElasticsearch.enabled` is `true`
+# - these configs applies only if all vector databases above are disabled and `externalElasticsearch.enabled` is true
 ###################################
 externalElasticsearch:
   enabled: false
@@ -2867,12 +2929,13 @@ externalElasticsearch:
   username: ""
   password: ""
 
+
 ## @section (Experimental): External Secret Operator
 ##
 
 ###################################
 # External Secret (External Secrets Operator)
-# - these configs are used when `externalSecret.enabled` is true
+# - these configs applies only if `externalSecret.enabled` is true
 # - when enabled, the built-in Secret resources will be replaced by ExternalSecret resources
 ###################################
 externalSecret:

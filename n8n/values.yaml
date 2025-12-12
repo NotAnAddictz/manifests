@@ -427,7 +427,7 @@ worker:
     annotations: {}
     # -- Service types allow you to specify what kind of Service you want.
     # E.g., ClusterIP, NodePort, LoadBalancer, ExternalName
-    type: ClusterIP
+    type: NodePort
     # -- Service port
     port: 80
 

@@ -1,10 +1,15 @@
+{{- if or .Values.externalPostgres.enabled 
+  (and
+    (not .Values.externalMysql.enabled)
+    .Values.postgresql.enabled
+)}}
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: "{{ include "dify.fullname" . }}-test-postgres-connection"
   labels:
     {{- include "dify.labels" . | nindent 4 }}
-    component: "postgres"
+    component: "postgres-conn-test"
   annotations:
     "helm.sh/hook": test
 spec:
@@ -28,3 +33,4 @@ spec:
               name: {{ template "dify.api.fullname" . }}
           - secretRef:
               name: {{ template "dify.api.fullname" . }}
+{{- end }}
