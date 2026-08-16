@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/NotAnAddictz/manifests
     targetRevision: main
-    path: dify
+    path: dify-helm
     helm:
       valueFiles:
         - values.yaml
