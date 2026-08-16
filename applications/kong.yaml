@@ -1,20 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: dify
+  name: kong
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/NotAnAddictz/manifests
     targetRevision: main
-    path: dify-helm/charts/dify
+    path: kong/charts/kong
     helm:
       valueFiles:
         - values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: dify
+    namespace: kong
   syncPolicy:
     automated:
       prune: true

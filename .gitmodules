@@ -1,3 +1,6 @@
 [submodule "dify-helm"]
 	path = dify-helm
 	url = https://github.com/BorisPolonsky/dify-helm.git
+[submodule "charts"]
+	path = kong
+	url = https://github.com/Kong/charts.git
